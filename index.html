@@ -26,46 +26,46 @@
   </style>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen pb-12">
-  <div class="max-w-5xl mx-auto px-3 sm:px-6 pt-4 sm:pt-6 space-y-4">
+  <div class="max-w-5xl mx-auto px-2.5 sm:px-6 pt-3 sm:pt-6 space-y-3.5 sm:space-y-4">
     <!-- 상단 타이틀 및 공유/초기화 액션 바 -->
     <header class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-sm">
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3.5">
         <div>
-          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-300 text-xs font-semibold mb-2">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-400/15 border border-amber-300/30 text-amber-300 text-xs font-semibold mb-1.5">
             <span>현장 레벨 측정 · 단차 자동 판정</span>
           </div>
           <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">레벨 계산기</h1>
           <p class="text-xs sm:text-sm text-slate-300 mt-1">
-            기준점 대비 측정 레벨의 단차(<span class="font-semibold text-white">측정값 - 기준점</span>)와 작업 구분(<span class="text-amber-300 font-semibold">짤라</span> · <span class="text-sky-300 font-semibold">붙여</span> · <span class="text-emerald-300 font-semibold">놔둬</span>)을 즉시 계산합니다.
+            단차(<span class="font-semibold text-white">측정값 - 기준점</span>) · 구분(<span class="text-amber-300 font-semibold">짤라</span> · <span class="text-sky-300 font-semibold">붙여</span> · <span class="text-emerald-300 font-semibold">놔둬</span>) 자동 계산
           </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             type="button"
             onclick="copySummaryText()"
-            class="px-3.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs sm:text-sm font-bold transition shadow-sm active:scale-[0.99]"
+            class="px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs sm:text-sm font-bold transition shadow-sm active:scale-[0.99]"
           >
             요약 복사
           </button>
           <button
             type="button"
             onclick="exportCsv()"
-            class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs sm:text-sm font-semibold transition active:scale-[0.99]"
+            class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 text-xs sm:text-sm font-semibold transition active:scale-[0.99]"
           >
             CSV 저장
           </button>
           <button
             type="button"
             onclick="resetSampleData()"
-            class="px-3.5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs sm:text-sm font-medium transition active:scale-[0.99]"
+            class="px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs sm:text-sm font-medium transition active:scale-[0.99]"
           >
             샘플 복원
           </button>
           <button
             type="button"
             onclick="clearAllMeasurements()"
-            class="px-3.5 py-2.5 rounded-xl bg-rose-950/70 hover:bg-rose-900 text-rose-200 border border-rose-800/60 text-xs sm:text-sm font-medium transition active:scale-[0.99]"
+            class="px-3 py-2 rounded-xl bg-rose-950/70 hover:bg-rose-900 text-rose-200 border border-rose-800/60 text-xs sm:text-sm font-medium transition active:scale-[0.99]"
           >
             측정값 비우기
           </button>
@@ -77,10 +77,10 @@
     </header>
 
     <!-- 현장 정보 + 기준점 설정 카드 -->
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-5">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         <div>
-          <label for="siteName" class="block text-xs font-bold text-slate-600 mb-1.5">
+          <label for="siteName" class="block text-xs font-bold text-slate-600 mb-1">
             현장명 (선택)
           </label>
           <input
@@ -89,27 +89,27 @@
             autocomplete="off"
             autocorrect="off"
             autocapitalize="off"
-            placeholder="예: ○○공원 진입로 포장"
+            placeholder="예: ○○공원 진입로"
             oninput="handleSiteNameInput(this.value)"
-            class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
         </div>
 
         <div>
-          <label for="measureDate" class="block text-xs font-bold text-slate-600 mb-1.5">
+          <label for="measureDate" class="block text-xs font-bold text-slate-600 mb-1">
             측정 날짜 (선택)
           </label>
           <input
             id="measureDate"
             type="date"
             onchange="handleDateChange(this.value)"
-            class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
+            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
         </div>
 
         <div class="sm:col-span-2 lg:col-span-2">
-          <label for="referencePoint" class="block text-xs font-bold text-amber-900 mb-1.5">
-            기준점 (원하는 숫자로 자유 변경 가능 · 초기 기본값: 100)
+          <label for="referencePoint" class="block text-xs font-bold text-amber-900 mb-1">
+            기준점 (자유 변경 가능 · 기본값: 100)
           </label>
           <div class="flex items-center gap-2">
             <input
@@ -119,15 +119,15 @@
               inputmode="decimal"
               value="100"
               oninput="handleRefChange()"
-              class="w-full rounded-xl border-2 border-amber-400 bg-amber-50/60 px-4 py-2.5 text-base sm:text-lg font-extrabold text-slate-950 tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-500"
+              class="w-full rounded-xl border-2 border-amber-400 bg-amber-50/70 px-3.5 py-2 text-base sm:text-lg font-extrabold text-slate-950 tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
             <button
               type="button"
               onclick="setRefDefault()"
-              class="px-3 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold shrink-0 transition"
+              class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold shrink-0 transition"
               title="기준점을 100으로 되돌리기"
             >
-              100으로 초기화
+              100 초기화
             </button>
           </div>
         </div>
@@ -135,43 +135,43 @@
     </section>
 
     <!-- 실시간 요약 KPI 카드 4종 -->
-    <section class="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm">
+    <section class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+      <div class="bg-white rounded-2xl border border-slate-200 p-3.5 sm:p-4 shadow-sm">
         <div class="text-xs font-semibold text-slate-500">입력 측점 수</div>
-        <div class="flex items-baseline justify-between mt-1.5">
+        <div class="flex items-baseline justify-between mt-1">
           <span id="kpiCount" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tabular-nums">7</span>
-          <span class="text-xs text-slate-400 tabular-nums">/ 40 측점</span>
+          <span class="text-xs text-slate-400 tabular-nums">/ 40</span>
         </div>
       </div>
 
-      <div class="bg-amber-50 rounded-2xl border-2 border-amber-300 p-4 shadow-sm">
-        <div class="flex items-center justify-between">
+      <div class="bg-amber-50 rounded-2xl border-2 border-amber-300 p-3.5 sm:p-4 shadow-sm">
+        <div class="flex items-center justify-between gap-1">
           <span class="text-xs font-bold text-amber-900">짤라 (측정 &lt; 기준)</span>
-          <span class="px-2 py-0.5 rounded-full bg-amber-500 text-white text-[11px] font-extrabold">절토·깎기</span>
+          <span class="px-1.5 py-0.5 rounded-full bg-amber-500 text-white text-[10px] font-extrabold shrink-0">절토</span>
         </div>
-        <div class="flex items-baseline justify-between mt-1.5">
+        <div class="flex items-baseline justify-between mt-1">
           <span id="kpiCut" class="text-2xl sm:text-3xl font-extrabold text-amber-800 tabular-nums">2</span>
           <span class="text-xs font-semibold text-amber-700">건</span>
         </div>
       </div>
 
-      <div class="bg-sky-50 rounded-2xl border-2 border-sky-300 p-4 shadow-sm">
-        <div class="flex items-center justify-between">
+      <div class="bg-sky-50 rounded-2xl border-2 border-sky-300 p-3.5 sm:p-4 shadow-sm">
+        <div class="flex items-center justify-between gap-1">
           <span class="text-xs font-bold text-sky-900">붙여 (측정 &gt; 기준)</span>
-          <span class="px-2 py-0.5 rounded-full bg-sky-600 text-white text-[11px] font-extrabold">성토·채우기</span>
+          <span class="px-1.5 py-0.5 rounded-full bg-sky-600 text-white text-[10px] font-extrabold shrink-0">성토</span>
         </div>
-        <div class="flex items-baseline justify-between mt-1.5">
+        <div class="flex items-baseline justify-between mt-1">
           <span id="kpiFill" class="text-2xl sm:text-3xl font-extrabold text-sky-800 tabular-nums">4</span>
           <span class="text-xs font-semibold text-sky-700">건</span>
         </div>
       </div>
 
-      <div class="bg-emerald-50 rounded-2xl border-2 border-emerald-300 p-4 shadow-sm">
-        <div class="flex items-center justify-between">
+      <div class="bg-emerald-50 rounded-2xl border-2 border-emerald-300 p-3.5 sm:p-4 shadow-sm">
+        <div class="flex items-center justify-between gap-1">
           <span class="text-xs font-bold text-emerald-900">놔둬 (측정 = 기준)</span>
-          <span class="px-2 py-0.5 rounded-full bg-emerald-600 text-white text-[11px] font-extrabold">현상태 유지</span>
+          <span class="px-1.5 py-0.5 rounded-full bg-emerald-600 text-white text-[10px] font-extrabold shrink-0">유지</span>
         </div>
-        <div class="flex items-baseline justify-between mt-1.5">
+        <div class="flex items-baseline justify-between mt-1">
           <span id="kpiKeep" class="text-2xl sm:text-3xl font-extrabold text-emerald-800 tabular-nums">1</span>
           <span class="text-xs font-semibold text-emerald-700">건</span>
         </div>
@@ -180,13 +180,13 @@
 
     <!-- 필터 바 및 측점 1~40 테이블 -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-      <div class="p-4 sm:px-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div class="p-3 sm:px-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5">
         <div class="flex flex-wrap items-center gap-1.5" role="group" aria-label="결과 필터">
           <button
             type="button"
             data-filter="ALL"
             onclick="setFilter('ALL')"
-            class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition"
+            class="filter-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 text-white transition"
           >
             전체 (40)
           </button>
@@ -194,25 +194,25 @@
             type="button"
             data-filter="CUT"
             onclick="setFilter('CUT')"
-            class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 hover:bg-amber-200 transition"
+            class="filter-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-amber-100 text-amber-900 hover:bg-amber-200 transition"
           >
-            짤라만 보기
+            짤라만
           </button>
           <button
             type="button"
             data-filter="FILL"
             onclick="setFilter('FILL')"
-            class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-sky-100 text-sky-900 hover:bg-sky-200 transition"
+            class="filter-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-sky-100 text-sky-900 hover:bg-sky-200 transition"
           >
-            붙여만 보기
+            붙여만
           </button>
           <button
             type="button"
             data-filter="KEEP"
             onclick="setFilter('KEEP')"
-            class="filter-btn px-3 py-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 transition"
+            class="filter-btn px-2.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-100 text-emerald-900 hover:bg-emerald-200 transition"
           >
-            놔둬만 보기
+            놔둬만
           </button>
         </div>
 
@@ -227,25 +227,26 @@
         </div>
       </div>
 
+      <!-- 메모 열을 축소하여 측정레벨·단차·높낮음이 좁은 화면에서도 잘 보이도록 구성 -->
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-left border-collapse table-fixed sm:table-auto">
           <thead>
             <tr class="bg-slate-800 text-white text-xs sm:text-sm">
-              <th class="py-3 px-3 sm:px-4 font-bold w-24 sm:w-28 text-center">측점</th>
-              <th class="py-3 px-3 sm:px-4 font-bold w-40 sm:w-48">측정 레벨</th>
-              <th class="py-3 px-3 sm:px-4 font-bold w-32 sm:w-36 text-right">단차</th>
-              <th class="py-3 px-3 sm:px-4 font-bold w-32 sm:w-40 text-center">높낮음</th>
-              <th class="py-3 px-3 sm:px-4 font-bold">현장 메모 (선택)</th>
+              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-14 sm:w-24 text-center">측점</th>
+              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-24 sm:w-44">측정레벨</th>
+              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-16 sm:w-32 text-right">단차</th>
+              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-16 sm:w-28 text-center">높낮음</th>
+              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-16 sm:w-36 text-center sm:text-left">메모</th>
             </tr>
           </thead>
-          <tbody id="levelTableBody" class="divide-y divide-slate-200 text-sm">
+          <tbody id="levelTableBody" class="divide-y divide-slate-200 text-xs sm:text-sm">
           </tbody>
         </table>
       </div>
     </section>
 
     <!-- 공유/보고서용 요약 미리보기 박스 -->
-    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-5">
+    <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-5">
       <div class="flex items-center justify-between mb-2">
         <h2 class="text-xs sm:text-sm font-bold text-slate-700">카톡 · 현장 보고서 요약 미리보기</h2>
         <button
@@ -258,7 +259,7 @@
       </div>
       <pre
         id="summaryPreview"
-        class="w-full rounded-xl bg-slate-50 border border-slate-200 p-3.5 text-xs sm:text-sm text-slate-800 whitespace-pre-wrap break-words leading-relaxed tabular-nums"
+        class="w-full rounded-xl bg-slate-50 border border-slate-200 p-3 text-xs sm:text-sm text-slate-800 whitespace-pre-wrap break-words leading-relaxed tabular-nums"
       ></pre>
     </section>
   </div>
@@ -276,7 +277,7 @@
       7: 120
     };
 
-    const STORAGE_KEY = 'field_level_calculator_v2';
+    const STORAGE_KEY = 'field_level_calculator_v3';
 
     let state = {
       siteName: '',
@@ -414,7 +415,6 @@
       state.referenceRaw = rawVal;
 
       if (rawVal === '' || rawVal === '-' || rawVal === '.') {
-        // 입력 도중(빈칸, 마이너스, 소수점)에는 기존 계산 기준점을 유지하되 입력값은 그대로 둠
         saveState();
         return;
       }
@@ -468,15 +468,15 @@
 
     function getBadgeHtml(actionCode, actionLabel) {
       if (actionCode === 'CUT') {
-        return `<span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-amber-500 text-white text-xs sm:text-sm font-extrabold tracking-wide shadow-xs">${actionLabel}</span>`;
+        return `<span class="inline-flex items-center justify-center px-2 sm:px-3 py-1 rounded-full bg-amber-500 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
       }
       if (actionCode === 'FILL') {
-        return `<span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-sky-600 text-white text-xs sm:text-sm font-extrabold tracking-wide shadow-xs">${actionLabel}</span>`;
+        return `<span class="inline-flex items-center justify-center px-2 sm:px-3 py-1 rounded-full bg-sky-600 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
       }
       if (actionCode === 'KEEP') {
-        return `<span class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-extrabold tracking-wide shadow-xs">${actionLabel}</span>`;
+        return `<span class="inline-flex items-center justify-center px-2 sm:px-3 py-1 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
       }
-      return `<span class="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-400 text-xs font-semibold">미입력</span>`;
+      return `<span class="inline-flex items-center justify-center px-1.5 sm:px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-400 text-[11px] sm:text-xs font-semibold whitespace-nowrap">-</span>`;
     }
 
     function getDiffClass(actionCode) {
@@ -496,7 +496,7 @@
 
       if (diffCell) {
         diffCell.textContent = res.hasInput ? formatDiff(res.diff) : '-';
-        diffCell.className = `py-2.5 px-3 sm:px-4 text-right tabular-nums text-sm sm:text-base ${getDiffClass(res.actionCode)}`;
+        diffCell.className = `py-2 px-1.5 sm:px-4 text-right tabular-nums text-xs sm:text-base break-all sm:break-normal ${getDiffClass(res.actionCode)}`;
       }
       if (actionCell) {
         actionCell.innerHTML = getBadgeHtml(res.actionCode, res.actionLabel);
@@ -586,28 +586,28 @@
         const levelVal = state.points[item.index]?.level ?? '';
 
         tr.innerHTML = `
-          <td class="py-2.5 px-3 sm:px-4 text-center font-bold text-slate-700 tabular-nums whitespace-nowrap">
-            측점 ${item.index}
+          <td class="py-2 px-1 sm:px-4 text-center font-bold text-slate-700 tabular-nums whitespace-nowrap">
+            ${item.index}번
           </td>
-          <td class="py-2.5 px-3 sm:px-4">
+          <td class="py-2 px-1 sm:px-4">
             <input
               id="level-${item.index}"
               type="number"
               step="any"
               inputmode="decimal"
               value="${levelVal}"
-              placeholder="측정값 입력"
+              placeholder="값 입력"
               oninput="handleLevelInput(${item.index}, this.value)"
-              class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm sm:text-base font-bold text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
+              class="w-full rounded-lg sm:rounded-xl border border-slate-300 bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-base font-extrabold text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
             />
           </td>
-          <td id="diff-${item.index}" class="py-2.5 px-3 sm:px-4 text-right tabular-nums text-sm sm:text-base ${getDiffClass(item.actionCode)}">
+          <td id="diff-${item.index}" class="py-2 px-1.5 sm:px-4 text-right tabular-nums text-xs sm:text-base break-all sm:break-normal ${getDiffClass(item.actionCode)}">
             ${item.hasInput ? formatDiff(item.diff) : '-'}
           </td>
-          <td id="action-${item.index}" class="py-2.5 px-3 sm:px-4 text-center whitespace-nowrap">
+          <td id="action-${item.index}" class="py-2 px-1 sm:px-4 text-center whitespace-nowrap">
             ${getBadgeHtml(item.actionCode, item.actionLabel)}
           </td>
-          <td class="py-2.5 px-3 sm:px-4">
+          <td class="py-2 px-1 sm:px-4">
             <input
               id="note-${item.index}"
               type="text"
@@ -615,7 +615,7 @@
               value="${escapedNote}"
               placeholder="메모"
               oninput="handleNoteInput(${item.index}, this.value)"
-              class="w-full min-w-[110px] rounded-xl border border-slate-200 bg-white/90 px-3 py-2 text-xs sm:text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400"
+              class="w-full rounded-lg sm:rounded-xl border border-slate-200 bg-white/90 px-1.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400"
             />
           </td>
         `;
