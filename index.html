@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>현장 레벨 계산기</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -16,17 +16,19 @@
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-      opacity: 0.7;
-    }
     input, button {
       touch-action: manipulation;
+    }
+    .level-input {
+      color: #0f172a !important;
+      background-color: #ffffff !important;
+      opacity: 1 !important;
+      -webkit-text-fill-color: #0f172a !important;
     }
   </style>
 </head>
 <body class="bg-slate-100 text-slate-900 min-h-screen pb-12">
-  <div class="max-w-5xl mx-auto px-2.5 sm:px-6 pt-3 sm:pt-6 space-y-3.5 sm:space-y-4">
+  <div class="max-w-4xl mx-auto px-2.5 sm:px-6 pt-3 sm:pt-6 space-y-3.5 sm:space-y-4">
     <!-- 상단 타이틀 및 공유/초기화 액션 바 -->
     <header class="bg-slate-900 text-white rounded-2xl p-4 sm:p-6 shadow-sm">
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3.5">
@@ -87,11 +89,9 @@
             id="siteName"
             type="text"
             autocomplete="off"
-            autocorrect="off"
-            autocapitalize="off"
             placeholder="예: ○○공원 진입로"
             oninput="handleSiteNameInput(this.value)"
-            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
+            class="level-input w-full rounded-xl border border-slate-300 px-3 py-2 text-base sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
         </div>
 
@@ -103,7 +103,7 @@
             id="measureDate"
             type="date"
             onchange="handleDateChange(this.value)"
-            class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
+            class="level-input w-full rounded-xl border border-slate-300 px-3 py-2 text-base sm:text-sm font-medium tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
         </div>
 
@@ -114,17 +114,17 @@
           <div class="flex items-center gap-2">
             <input
               id="referencePoint"
-              type="number"
-              step="any"
+              type="text"
               inputmode="decimal"
               value="100"
               oninput="handleRefChange()"
-              class="w-full rounded-xl border-2 border-amber-400 bg-amber-50/70 px-3.5 py-2 text-base sm:text-lg font-extrabold text-slate-950 tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-500"
+              class="w-full rounded-xl border-2 border-amber-400 bg-amber-50 px-3.5 py-2 text-base sm:text-lg font-extrabold text-slate-950 tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-500"
+              style="color:#0f172a; -webkit-text-fill-color:#0f172a;"
             />
             <button
               type="button"
               onclick="setRefDefault()"
-              class="px-3 py-2 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold shrink-0 transition"
+              class="px-3 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold shrink-0 transition"
               title="기준점을 100으로 되돌리기"
             >
               100 초기화
@@ -227,16 +227,14 @@
         </div>
       </div>
 
-      <!-- 메모 열을 축소하여 측정레벨·단차·높낮음이 좁은 화면에서도 잘 보이도록 구성 -->
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse table-fixed sm:table-auto">
+        <table class="w-full text-left border-collapse">
           <thead>
             <tr class="bg-slate-800 text-white text-xs sm:text-sm">
-              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-14 sm:w-24 text-center">측점</th>
-              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-24 sm:w-44">측정레벨</th>
-              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-16 sm:w-32 text-right">단차</th>
-              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-16 sm:w-28 text-center">높낮음</th>
-              <th class="py-2.5 px-1.5 sm:px-4 font-bold w-16 sm:w-36 text-center sm:text-left">메모</th>
+              <th class="py-2.5 px-2 sm:px-4 font-bold w-16 sm:w-24 text-center">측점</th>
+              <th class="py-2.5 px-2 sm:px-4 font-bold w-32 sm:w-52">측정레벨</th>
+              <th class="py-2.5 px-2 sm:px-4 font-bold w-24 sm:w-36 text-right">단차</th>
+              <th class="py-2.5 px-2 sm:px-4 font-bold w-20 sm:w-32 text-center">높낮음</th>
             </tr>
           </thead>
           <tbody id="levelTableBody" class="divide-y divide-slate-200 text-xs sm:text-sm">
@@ -277,7 +275,7 @@
       7: 120
     };
 
-    const STORAGE_KEY = 'field_level_calculator_v3';
+    const STORAGE_KEY = 'field_level_calculator_v4';
 
     let state = {
       siteName: '',
@@ -292,8 +290,7 @@
       const pts = {};
       for (let i = 1; i <= TOTAL_POINTS; i++) {
         pts[i] = {
-          level: Object.prototype.hasOwnProperty.call(SAMPLE_VALUES, i) ? String(SAMPLE_VALUES[i]) : '',
-          note: ''
+          level: Object.prototype.hasOwnProperty.call(SAMPLE_VALUES, i) ? String(SAMPLE_VALUES[i]) : ''
         };
       }
       return pts;
@@ -302,7 +299,7 @@
     function createEmptyPoints() {
       const pts = {};
       for (let i = 1; i <= TOTAL_POINTS; i++) {
-        pts[i] = { level: '', note: '' };
+        pts[i] = { level: '' };
       }
       return pts;
     }
@@ -335,7 +332,6 @@
             base[i].level = parsed.points[i].level !== undefined && parsed.points[i].level !== null
               ? String(parsed.points[i].level)
               : '';
-            base[i].note = typeof parsed.points[i].note === 'string' ? parsed.points[i].note : '';
           }
         }
         state.points = base;
@@ -378,12 +374,17 @@
       return `${val}`;
     }
 
+    function parseNumericValue(rawStr) {
+      if (rawStr === '' || rawStr === null || rawStr === undefined) return null;
+      const trimmed = String(rawStr).trim();
+      if (trimmed === '' || trimmed === '-' || trimmed === '.' || trimmed === '-.') return null;
+      const num = Number(trimmed);
+      return Number.isFinite(num) ? num : null;
+    }
+
     function evaluatePoint(rawLevelStr, refPoint) {
-      if (rawLevelStr === '' || rawLevelStr === null || rawLevelStr === undefined) {
-        return { hasInput: false, level: null, diff: null, actionCode: 'NONE', actionLabel: '-' };
-      }
-      const parsedLevel = Number(rawLevelStr);
-      if (!Number.isFinite(parsedLevel)) {
+      const parsedLevel = parseNumericValue(rawLevelStr);
+      if (parsedLevel === null) {
         return { hasInput: false, level: null, diff: null, actionCode: 'NONE', actionLabel: '-' };
       }
 
@@ -414,17 +415,15 @@
       const rawVal = input.value;
       state.referenceRaw = rawVal;
 
-      if (rawVal === '' || rawVal === '-' || rawVal === '.') {
+      const numVal = parseNumericValue(rawVal);
+      if (numVal === null) {
         saveState();
         return;
       }
 
-      const numVal = Number(rawVal);
-      if (Number.isFinite(numVal)) {
-        state.referencePoint = numVal;
-        saveState();
-        recalculateAllRows();
-      }
+      state.referencePoint = numVal;
+      saveState();
+      recalculateAllRows();
     }
 
     function setRefDefault() {
@@ -437,17 +436,10 @@
     }
 
     function handleLevelInput(index, value) {
-      if (!state.points[index]) state.points[index] = { level: '', note: '' };
+      if (!state.points[index]) state.points[index] = { level: '' };
       state.points[index].level = value;
       saveState();
       updateRowAndSummary(index);
-    }
-
-    function handleNoteInput(index, value) {
-      if (!state.points[index]) state.points[index] = { level: '', note: '' };
-      state.points[index].note = value;
-      saveState();
-      buildSummaryPreview();
     }
 
     function setFilter(nextFilter) {
@@ -468,15 +460,15 @@
 
     function getBadgeHtml(actionCode, actionLabel) {
       if (actionCode === 'CUT') {
-        return `<span class="inline-flex items-center justify-center px-2 sm:px-3 py-1 rounded-full bg-amber-500 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
+        return `<span class="inline-flex items-center justify-center px-2.5 sm:px-3 py-1 rounded-full bg-amber-500 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
       }
       if (actionCode === 'FILL') {
-        return `<span class="inline-flex items-center justify-center px-2 sm:px-3 py-1 rounded-full bg-sky-600 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
+        return `<span class="inline-flex items-center justify-center px-2.5 sm:px-3 py-1 rounded-full bg-sky-600 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
       }
       if (actionCode === 'KEEP') {
-        return `<span class="inline-flex items-center justify-center px-2 sm:px-3 py-1 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
+        return `<span class="inline-flex items-center justify-center px-2.5 sm:px-3 py-1 rounded-full bg-emerald-600 text-white text-xs sm:text-sm font-extrabold whitespace-nowrap">${actionLabel}</span>`;
       }
-      return `<span class="inline-flex items-center justify-center px-1.5 sm:px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-400 text-[11px] sm:text-xs font-semibold whitespace-nowrap">-</span>`;
+      return `<span class="inline-flex items-center justify-center px-2 py-0.5 rounded-full bg-slate-100 text-slate-400 text-xs font-semibold whitespace-nowrap">-</span>`;
     }
 
     function getDiffClass(actionCode) {
@@ -487,7 +479,7 @@
     }
 
     function updateRowAndSummary(index) {
-      const pt = state.points[index] || { level: '', note: '' };
+      const pt = state.points[index] || { level: '' };
       const res = evaluatePoint(pt.level, state.referencePoint);
 
       const diffCell = document.getElementById(`diff-${index}`);
@@ -496,7 +488,7 @@
 
       if (diffCell) {
         diffCell.textContent = res.hasInput ? formatDiff(res.diff) : '-';
-        diffCell.className = `py-2 px-1.5 sm:px-4 text-right tabular-nums text-xs sm:text-base break-all sm:break-normal ${getDiffClass(res.actionCode)}`;
+        diffCell.className = `py-2 px-2 sm:px-4 text-right tabular-nums text-sm sm:text-base whitespace-nowrap ${getDiffClass(res.actionCode)}`;
       }
       if (actionCell) {
         actionCell.innerHTML = getBadgeHtml(res.actionCode, res.actionLabel);
@@ -529,7 +521,7 @@
       const items = [];
 
       for (let i = 1; i <= TOTAL_POINTS; i++) {
-        const pt = state.points[i] || { level: '', note: '' };
+        const pt = state.points[i] || { level: '' };
         const res = evaluatePoint(pt.level, state.referencePoint);
         if (res.hasInput) {
           inputCount++;
@@ -537,7 +529,7 @@
           else if (res.actionCode === 'FILL') fillCount++;
           else if (res.actionCode === 'KEEP') keepCount++;
         }
-        items.push({ index: i, ...res, note: pt.note || '' });
+        items.push({ index: i, ...res });
       }
 
       return { inputCount, cutCount, fillCount, keepCount, items };
@@ -562,7 +554,7 @@
       if (filtered.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="5" class="py-10 px-4 text-center text-sm text-slate-500">
+            <td colspan="4" class="py-10 px-4 text-center text-sm text-slate-500">
               선택한 조건에 해당하는 측점이 없습니다.
             </td>
           </tr>
@@ -582,41 +574,30 @@
           ? 'bg-emerald-50/40 hover:bg-emerald-50/80 transition-colors'
           : 'hover:bg-slate-50 transition-colors';
 
-        const escapedNote = item.note.replace(/"/g, '&quot;');
-        const levelVal = state.points[item.index]?.level ?? '';
+        const levelVal = String(state.points[item.index]?.level ?? '').replace(/"/g, '&quot;');
 
         tr.innerHTML = `
-          <td class="py-2 px-1 sm:px-4 text-center font-bold text-slate-700 tabular-nums whitespace-nowrap">
+          <td class="py-2 px-1.5 sm:px-4 text-center font-bold text-slate-700 tabular-nums whitespace-nowrap">
             ${item.index}번
           </td>
-          <td class="py-2 px-1 sm:px-4">
+          <td class="py-2 px-1.5 sm:px-4">
             <input
               id="level-${item.index}"
-              type="number"
-              step="any"
+              type="text"
               inputmode="decimal"
+              autocomplete="off"
               value="${levelVal}"
-              placeholder="값 입력"
+              placeholder="측정값 입력"
               oninput="handleLevelInput(${item.index}, this.value)"
-              class="w-full rounded-lg sm:rounded-xl border border-slate-300 bg-white px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-base font-extrabold text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
+              class="level-input w-full rounded-xl border border-slate-300 px-2.5 sm:px-3 py-2 text-base font-extrabold tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
+              style="color:#0f172a; -webkit-text-fill-color:#0f172a;"
             />
           </td>
-          <td id="diff-${item.index}" class="py-2 px-1.5 sm:px-4 text-right tabular-nums text-xs sm:text-base break-all sm:break-normal ${getDiffClass(item.actionCode)}">
+          <td id="diff-${item.index}" class="py-2 px-2 sm:px-4 text-right tabular-nums text-sm sm:text-base whitespace-nowrap ${getDiffClass(item.actionCode)}">
             ${item.hasInput ? formatDiff(item.diff) : '-'}
           </td>
-          <td id="action-${item.index}" class="py-2 px-1 sm:px-4 text-center whitespace-nowrap">
+          <td id="action-${item.index}" class="py-2 px-1.5 sm:px-4 text-center whitespace-nowrap">
             ${getBadgeHtml(item.actionCode, item.actionLabel)}
-          </td>
-          <td class="py-2 px-1 sm:px-4">
-            <input
-              id="note-${item.index}"
-              type="text"
-              autocomplete="off"
-              value="${escapedNote}"
-              placeholder="메모"
-              oninput="handleNoteInput(${item.index}, this.value)"
-              class="w-full rounded-lg sm:rounded-xl border border-slate-200 bg-white/90 px-1.5 sm:px-3 py-1.5 sm:py-2 text-[11px] sm:text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-400"
-            />
           </td>
         `;
         fragment.appendChild(tr);
@@ -641,10 +622,7 @@
       const entered = stats.items.filter((it) => it.hasInput);
       if (entered.length > 0) {
         const detailStr = entered
-          .map((it) => {
-            const notePart = it.note.trim() ? `(${it.note.trim()})` : '';
-            return `${it.index}번: ${it.level} [${formatDiff(it.diff)} / ${it.actionLabel}]${notePart}`;
-          })
+          .map((it) => `${it.index}번: ${it.level} [${formatDiff(it.diff)} / ${it.actionLabel}]`)
           .join(', ');
         lines.push(detailStr);
       }
@@ -694,7 +672,7 @@
         const stats = computeStats();
         const rows = [
           ['현장명', state.siteName || '', '측정날짜', state.measureDate || '', '기준점', String(state.referencePoint)],
-          ['측점', '측정레벨', '단차', '높낮음', '메모']
+          ['측점', '측정레벨', '단차', '높낮음']
         ];
 
         stats.items.forEach((it) => {
@@ -702,8 +680,7 @@
             `측점 ${it.index}`,
             it.hasInput ? String(it.level) : '',
             it.hasInput ? formatDiff(it.diff) : '',
-            it.hasInput ? it.actionLabel : '',
-            it.note || ''
+            it.hasInput ? it.actionLabel : ''
           ]);
         });
 
