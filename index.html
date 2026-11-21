@@ -45,17 +45,10 @@
         <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
           <button
             type="button"
-            onclick="shareReport()"
-            class="px-3 py-2 rounded-xl bg-yellow-300 hover:bg-yellow-200 text-slate-950 text-xs sm:text-sm font-extrabold transition shadow-sm active:scale-[0.99]"
-          >
-            카톡·공유
-          </button>
-          <button
-            type="button"
             onclick="copySummaryText()"
             class="px-3 py-2 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs sm:text-sm font-bold transition shadow-sm active:scale-[0.99]"
           >
-            리포트 복사
+            요약 복사
           </button>
           <button
             type="button"
@@ -250,30 +243,21 @@
       </div>
     </section>
 
-    <!-- 카톡 전송용 리포트 미리보기 박스 -->
+    <!-- 공유/보고서용 요약 미리보기 박스 -->
     <section class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-5">
-      <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-        <h2 class="text-xs sm:text-sm font-bold text-slate-700">카톡 전송용 레벨 측정 리포트</h2>
-        <div class="flex items-center gap-3">
-          <button
-            type="button"
-            onclick="shareReport()"
-            class="text-xs font-extrabold text-amber-700 hover:text-amber-900 underline"
-          >
-            카톡·공유하기
-          </button>
-          <button
-            type="button"
-            onclick="copySummaryText()"
-            class="text-xs font-bold text-sky-700 hover:text-sky-900 underline"
-          >
-            리포트 복사
-          </button>
-        </div>
+      <div class="flex items-center justify-between mb-2">
+        <h2 class="text-xs sm:text-sm font-bold text-slate-700">카톡 · 현장 보고서 요약 미리보기</h2>
+        <button
+          type="button"
+          onclick="copySummaryText()"
+          class="text-xs font-bold text-sky-700 hover:text-sky-900 underline"
+        >
+          텍스트 복사하기
+        </button>
       </div>
       <pre
         id="summaryPreview"
-        class="w-full rounded-xl bg-slate-50 border border-slate-200 p-3.5 text-xs sm:text-sm text-slate-800 whitespace-pre-wrap break-words leading-relaxed tabular-nums"
+        class="w-full rounded-xl bg-slate-50 border border-slate-200 p-3 text-xs sm:text-sm text-slate-800 whitespace-pre-wrap break-words leading-relaxed tabular-nums"
       ></pre>
     </section>
   </div>
@@ -291,7 +275,7 @@
       7: 120
     };
 
-    const STORAGE_KEY = 'field_level_calculator_v5';
+    const STORAGE_KEY = 'field_level_calculator_v4';
 
     let state = {
       siteName: '',
@@ -623,36 +607,24 @@
       tbody.appendChild(fragment);
     }
 
-    // 카카오톡 전송용 리포트 텍스트 생성
     function buildSummaryText() {
       const stats = computeStats();
-      const lines = ['📊 [현장 레벨 측정 리포트]'];
+      const headerParts = ['[레벨 측정 요약]'];
+      if (state.siteName.trim()) headerParts.push(`현장: ${state.siteName.trim()}`);
+      if (state.measureDate) headerParts.push(`일자: ${state.measureDate}`);
+      headerParts.push(`기준점: ${state.referencePoint}`);
 
-      if (state.siteName.trim()) lines.push(`• 현장명: ${state.siteName.trim()}`);
-      if (state.measureDate) lines.push(`• 측정일: ${state.measureDate}`);
-      lines.push(`• 기준점: ${state.referencePoint}`);
-      lines.push('────────────────────');
-      lines.push(`• 총 입력: ${stats.inputCount}곳 (짤라 ${stats.cutCount} / 붙여 ${stats.fillCount} / 놔둬 ${stats.keepCount})`);
+      const lines = [
+        headerParts.join(' | '),
+        `입력 ${stats.inputCount}곳 | 짤라 ${stats.cutCount}건 · 붙여 ${stats.fillCount}건 · 놔둬 ${stats.keepCount}건`
+      ];
 
       const entered = stats.items.filter((it) => it.hasInput);
-      const cutList = entered.filter((it) => it.actionCode === 'CUT');
-      const fillList = entered.filter((it) => it.actionCode === 'FILL');
-      const keepList = entered.filter((it) => it.actionCode === 'KEEP');
-
       if (entered.length > 0) {
-        lines.push('────────────────────');
-        lines.push('[측점별 상세]');
-        entered.forEach((it) => {
-          lines.push(`- ${it.index}번: 측정 ${it.level} | 단차 ${formatDiff(it.diff)} | ${it.actionLabel}`);
-        });
-
-        lines.push('────────────────────');
-        lines.push('[작업별 요약]');
-        lines.push(`• 짤라(${cutList.length}건): ${cutList.length ? cutList.map((x) => `${x.index}번(${formatDiff(x.diff)})`).join(', ') : '없음'}`);
-        lines.push(`• 붙여(${fillList.length}건): ${fillList.length ? fillList.map((x) => `${x.index}번(${formatDiff(x.diff)})`).join(', ') : '없음'}`);
-        lines.push(`• 놔둬(${keepList.length}건): ${keepList.length ? keepList.map((x) => `${x.index}번`).join(', ') : '없음'}`);
-      } else {
-        lines.push('입력된 측정값이 아직 없습니다.');
+        const detailStr = entered
+          .map((it) => `${it.index}번: ${it.level} [${formatDiff(it.diff)} / ${it.actionLabel}]`)
+          .join(', ');
+        lines.push(detailStr);
       }
 
       return lines.join('\n');
@@ -662,7 +634,8 @@
       document.getElementById('summaryPreview').textContent = buildSummaryText();
     }
 
-    function copyTextToClipboard(text, successMsg) {
+    function copySummaryText() {
+      const text = buildSummaryText();
       let copied = false;
 
       try {
@@ -681,38 +654,17 @@
 
       if (!copied && navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(
-          () => showBanner(successMsg),
-          () => showBanner('복사할 내용을 아래 리포트 창에서 직접 선택해 주세요.', true)
+          () => showBanner('요약 내용이 클립보드에 복사되었습니다.'),
+          () => showBanner('복사할 내용을 아래 미리보기에서 직접 선택해 주세요.', true)
         );
         return;
       }
 
       if (copied) {
-        showBanner(successMsg);
+        showBanner('요약 내용이 클립보드에 복사되었습니다.');
       } else {
-        showBanner('복사할 내용을 아래 리포트 창에서 직접 선택해 주세요.', true);
+        showBanner('복사할 내용을 아래 미리보기에서 직접 선택해 주세요.', true);
       }
-    }
-
-    function copySummaryText() {
-      copyTextToClipboard(buildSummaryText(), '카톡 전송용 리포트가 복사되었습니다. 카톡창에 붙여넣어 주세요!');
-    }
-
-    async function shareReport() {
-      const reportText = buildSummaryText();
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: '현장 레벨 측정 리포트',
-            text: reportText
-          });
-          showBanner('리포트 공유 창을 열었습니다.');
-          return;
-        } catch (err) {
-          if (err && err.name === 'AbortError') return;
-        }
-      }
-      copyTextToClipboard(reportText, '리포트가 복사되었습니다. 카카오톡에 붙여넣어 전송하세요!');
     }
 
     function exportCsv() {
