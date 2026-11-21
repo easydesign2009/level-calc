@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>현장 레벨 계산기</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -11,14 +11,17 @@
   <style>
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
+      -webkit-text-size-adjust: 100%;
     }
     .tabular-nums {
       font-variant-numeric: tabular-nums;
     }
-    /* 입력 숫자 화살표 가독성 및 터치 친화적 크기 확보 */
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
       opacity: 0.7;
+    }
+    input, button {
+      touch-action: manipulation;
     }
   </style>
 </head>
@@ -83,8 +86,11 @@
           <input
             id="siteName"
             type="text"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
             placeholder="예: ○○공원 진입로 포장"
-            oninput="saveState(); renderAll();"
+            oninput="handleSiteNameInput(this.value)"
             class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
         </div>
@@ -96,20 +102,21 @@
           <input
             id="measureDate"
             type="date"
-            onchange="saveState(); renderAll();"
+            onchange="handleDateChange(this.value)"
             class="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 tabular-nums focus:outline-none focus:ring-2 focus:ring-slate-900"
           />
         </div>
 
         <div class="sm:col-span-2 lg:col-span-2">
           <label for="referencePoint" class="block text-xs font-bold text-amber-900 mb-1.5">
-            기준점 (기본값: 100)
+            기준점 (원하는 숫자로 자유 변경 가능 · 초기 기본값: 100)
           </label>
           <div class="flex items-center gap-2">
             <input
               id="referencePoint"
               type="number"
               step="any"
+              inputmode="decimal"
               value="100"
               oninput="handleRefChange()"
               class="w-full rounded-xl border-2 border-amber-400 bg-amber-50/60 px-4 py-2.5 text-base sm:text-lg font-extrabold text-slate-950 tabular-nums focus:outline-none focus:ring-2 focus:ring-amber-500"
@@ -118,9 +125,9 @@
               type="button"
               onclick="setRefDefault()"
               class="px-3 py-2.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-950 text-xs font-bold shrink-0 transition"
-              title="기준점을 100으로 설정"
+              title="기준점을 100으로 되돌리기"
             >
-              100 고정
+              100으로 초기화
             </button>
           </div>
         </div>
@@ -232,7 +239,6 @@
             </tr>
           </thead>
           <tbody id="levelTableBody" class="divide-y divide-slate-200 text-sm">
-            <!-- JavaScript로 1~40 측점 행 생성 -->
           </tbody>
         </table>
       </div>
@@ -258,7 +264,6 @@
   </div>
 
   <script>
-    // 엑셀 원본('레벌계산기(ver.20230413).xlsx') 기준 기본 상수 및 샘플 데이터
     const TOTAL_POINTS = 40;
     const DEFAULT_REF = 100;
     const SAMPLE_VALUES = {
@@ -271,14 +276,14 @@
       7: 120
     };
 
-    const STORAGE_KEY = 'field_level_calculator_v1';
+    const STORAGE_KEY = 'field_level_calculator_v2';
 
     let state = {
       siteName: '',
       measureDate: new Date().toISOString().slice(0, 10),
       referencePoint: DEFAULT_REF,
+      referenceRaw: String(DEFAULT_REF),
       filter: 'ALL',
-      // 측점 1~40: { level: string, note: string }
       points: {}
     };
 
@@ -310,10 +315,17 @@
         }
         const parsed = JSON.parse(raw);
         state.siteName = typeof parsed.siteName === 'string' ? parsed.siteName : '';
-        state.measureDate = typeof parsed.measureDate === 'string' ? parsed.measureDate : state.measureDate;
-        state.referencePoint = Number.isFinite(Number(parsed.referencePoint)) && parsed.referencePoint !== ''
-          ? Number(parsed.referencePoint)
-          : DEFAULT_REF;
+        state.measureDate = typeof parsed.measureDate === 'string' && parsed.measureDate ? parsed.measureDate : state.measureDate;
+
+        const savedRef = parsed.referencePoint;
+        if (savedRef !== undefined && savedRef !== null && savedRef !== '' && Number.isFinite(Number(savedRef))) {
+          state.referencePoint = Number(savedRef);
+          state.referenceRaw = typeof parsed.referenceRaw === 'string' ? parsed.referenceRaw : String(Number(savedRef));
+        } else {
+          state.referencePoint = DEFAULT_REF;
+          state.referenceRaw = String(DEFAULT_REF);
+        }
+
         state.filter = ['ALL', 'CUT', 'FILL', 'KEEP'].includes(parsed.filter) ? parsed.filter : 'ALL';
 
         const base = createEmptyPoints();
@@ -336,7 +348,7 @@
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       } catch (err) {
-        // 스토리지 제한 환경에서는 무시
+        // 스토리지 제한 환경 무시
       }
     }
 
@@ -353,7 +365,6 @@
       }, 2600);
     }
 
-    // 부동소수점 오차(예: 103.3 - 100 = 3.3000000000000114) 정리
     function cleanNumber(num) {
       if (!Number.isFinite(num)) return 0;
       const rounded = Math.round(num * 1e6) / 1e6;
@@ -366,11 +377,6 @@
       return `${val}`;
     }
 
-    // 엑셀 로직:
-    // 단차 = 측정값 - 기준점
-    // 측정값 === 기준점 -> '놔둬'
-    // 측정값 < 기준점  -> '짤라'
-    // 측정값 > 기준점  -> '붙여'
     function evaluatePoint(rawLevelStr, refPoint) {
       if (rawLevelStr === '' || rawLevelStr === null || rawLevelStr === undefined) {
         return { hasInput: false, level: null, diff: null, actionCode: 'NONE', actionLabel: '-' };
@@ -390,20 +396,44 @@
       return { hasInput: true, level: parsedLevel, diff, actionCode: 'FILL', actionLabel: '붙여' };
     }
 
+    function handleSiteNameInput(value) {
+      state.siteName = value;
+      saveState();
+      buildSummaryPreview();
+    }
+
+    function handleDateChange(value) {
+      state.measureDate = value;
+      saveState();
+      buildSummaryPreview();
+    }
+
     function handleRefChange() {
       const input = document.getElementById('referencePoint');
-      const val = input.value === '' ? DEFAULT_REF : Number(input.value);
-      state.referencePoint = Number.isFinite(val) ? val : DEFAULT_REF;
-      saveState();
-      renderAll();
+      const rawVal = input.value;
+      state.referenceRaw = rawVal;
+
+      if (rawVal === '' || rawVal === '-' || rawVal === '.') {
+        // 입력 도중(빈칸, 마이너스, 소수점)에는 기존 계산 기준점을 유지하되 입력값은 그대로 둠
+        saveState();
+        return;
+      }
+
+      const numVal = Number(rawVal);
+      if (Number.isFinite(numVal)) {
+        state.referencePoint = numVal;
+        saveState();
+        recalculateAllRows();
+      }
     }
 
     function setRefDefault() {
       state.referencePoint = DEFAULT_REF;
+      state.referenceRaw = String(DEFAULT_REF);
       document.getElementById('referencePoint').value = String(DEFAULT_REF);
       saveState();
-      renderAll();
-      showBanner('기준점을 100으로 설정했습니다.');
+      recalculateAllRows();
+      showBanner('기준점을 100으로 초기화했습니다.');
     }
 
     function handleLevelInput(index, value) {
@@ -485,6 +515,12 @@
       buildSummaryPreview();
     }
 
+    function recalculateAllRows() {
+      for (let i = 1; i <= TOTAL_POINTS; i++) {
+        updateRowAndSummary(i);
+      }
+    }
+
     function computeStats() {
       let inputCount = 0;
       let cutCount = 0;
@@ -547,7 +583,7 @@
           : 'hover:bg-slate-50 transition-colors';
 
         const escapedNote = item.note.replace(/"/g, '&quot;');
-        const levelVal = item.hasInput ? String(item.level) : (state.points[item.index]?.level || '');
+        const levelVal = state.points[item.index]?.level ?? '';
 
         tr.innerHTML = `
           <td class="py-2.5 px-3 sm:px-4 text-center font-bold text-slate-700 tabular-nums whitespace-nowrap">
@@ -575,6 +611,7 @@
             <input
               id="note-${item.index}"
               type="text"
+              autocomplete="off"
               value="${escapedNote}"
               placeholder="메모"
               oninput="handleNoteInput(${item.index}, this.value)"
@@ -674,7 +711,6 @@
           .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
           .join('\r\n');
 
-        // 한글 엑셀 깨짐 방지를 위한 UTF-8 BOM 추가
         const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
@@ -694,12 +730,13 @@
 
     function resetSampleData() {
       state.referencePoint = DEFAULT_REF;
+      state.referenceRaw = String(DEFAULT_REF);
       state.filter = 'ALL';
       state.points = createSamplePoints();
       document.getElementById('referencePoint').value = String(DEFAULT_REF);
       saveState();
       renderAll();
-      showBanner('엑셀 기준 샘플 데이터(측점 1~7)로 복원했습니다.');
+      showBanner('샘플 데이터(측점 1~7)로 복원했습니다.');
     }
 
     function clearAllMeasurements() {
@@ -733,7 +770,7 @@
     function renderAll() {
       document.getElementById('siteName').value = state.siteName;
       document.getElementById('measureDate').value = state.measureDate;
-      document.getElementById('referencePoint').value = String(state.referencePoint);
+      document.getElementById('referencePoint').value = state.referenceRaw !== '' ? state.referenceRaw : String(state.referencePoint);
       updateFilterButtons();
       renderTable();
       updateKpis();
